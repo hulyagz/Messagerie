@@ -1,5 +1,6 @@
 import tkinter as tk
 from client import Client
+from tkinter import scrolledtext
 
 
 class ClientApp(tk.Tk):
@@ -48,7 +49,7 @@ class StartPage(tk.Frame):
         button.grid(row=4, column=0, columnspan=2)
 
     def validateConfig(self, data):
-        Client.receive_data(data)
+        self.controller.frames['PageMain'].receive_data(data)
         self.controller.show_frame("PageMain")
 
 
@@ -57,22 +58,27 @@ class PageMain(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.client = Client
-        messages = tk.Text(self, width=50)
-        messages.grid(row=0, column=0, padx=10, pady=10)
+        self.messages = scrolledtext.ScrolledText(self, width=50)
+        self.messages.grid(row=0, column=0, padx=10, pady=10)
 
-        self.entryMessage = tk.Entry(self, width=50)
+        self.entryMessage = tk.Entry(self, width=30)
         self.entryMessage.insert(0, "Votre message")
         self.entryMessage.grid(row=1, column=0, padx=10, pady=10)
+        self.messages.tag_config('message', foreground='#3498db')
 
         def send_message():
             clientMessage = self.entryMessage.get()
-            messages.insert('1.0', "\n" + "You: " + clientMessage)
-            self.client.receive_msg(clientMessage)
+            self.client.send(clientMessage)
 
         btnSendMessage = tk.Button(self, text="Send", width=20, command=send_message)
-        btnSendMessage.grid(row=1, column=1, padx=10, pady=10)
+        btnSendMessage.grid(row=2, column=0, padx=10, pady=20)
 
+    def receive_data(self, data):
+        self.client = Client(data['username'], data['server'], data['port'])
+        self.client.listen(self.handle)
+
+    def handle(self, data):
+        self.messages.insert(tk.END, data + '\n', 'message')
 
 if __name__ == '__main__':
     ClientApp().mainloop()

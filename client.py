@@ -25,7 +25,8 @@ class Client():
             self.handle_msg(data)
             time.sleep(0.1)
 
-    def listen(self):
+    def listen(self, handle):
+        self.handle = handle
         self.listen_thread.daemon = True
         self.listen_thread.start()
 
@@ -50,36 +51,22 @@ class Client():
             self.tidy_up()
         else:
             print(data)
+            self.handle(data)
 
-    def receive_data(self):
-        client = Client(self['username'], self['server'], self['port'])
-        client.listen()
 
-    @staticmethod
-    def receive_message(self, data):
-        print(data)
-        client = Client
-        message = data.encode("UTF-8")
-        client.send_message(data, message)
 
-    def send_message(self, message):
-        try:
-            data = {
-                'username': "YOU",
-                'message': message
-            }
-            print(message)
-            socket.sendall(json.dumps(data).encode("UTF-8"))
-        except socket.error:
-            print("unable to send message")
+    def receive_msg(self):
+        print(self)
 
+def handle(message):
+    print(message)
 
 if __name__ == "__main__":
     username = input("username: ")
     server = input("server: ")
     port = int(input("port: "))
     client = Client(username, server, port)
-    client.listen()
+    client.listen(handle)
     message = ""
     while message != "QUIT":
         message = input()
