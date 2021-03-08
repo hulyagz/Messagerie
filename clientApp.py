@@ -29,7 +29,6 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        self.client = Client
         tk.Label(self, text="Messagerie config:").grid(row=0, column=0)
         tk.Label(self, text="username:").grid(row=1, column=0)
         tk.Label(self, text="server:").grid(row=2, column=0)
@@ -49,7 +48,7 @@ class StartPage(tk.Frame):
         button.grid(row=4, column=0, columnspan=2)
 
     def validateConfig(self, data):
-        self.client.receive_data(data)
+        Client.receive_data(data)
         self.controller.show_frame("PageMain")
 
 
@@ -66,14 +65,12 @@ class PageMain(tk.Frame):
         self.entryMessage.insert(0, "Votre message")
         self.entryMessage.grid(row=1, column=0, padx=10, pady=10)
 
-        def send_message(data):
-            clientMessage = data['msg']
+        def send_message():
+            clientMessage = self.entryMessage.get()
             messages.insert('1.0', "\n" + "You: " + clientMessage)
-            self.client.receive_message(data, clientMessage)
+            self.client.receive_msg(clientMessage)
 
-        btnSendMessage = tk.Button(self, text="Send", width=20, command=lambda: send_message({
-            'msg': self.entryMessage.get()
-        }))
+        btnSendMessage = tk.Button(self, text="Send", width=20, command=send_message)
         btnSendMessage.grid(row=1, column=1, padx=10, pady=10)
 
 
