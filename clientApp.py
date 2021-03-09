@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import *
 from client import Client
 from tkinter import scrolledtext
 
@@ -30,10 +31,10 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        tk.Label(self, text="Messagerie config:").grid(row=0, column=0)
-        tk.Label(self, text="username:").grid(row=1, column=0)
-        tk.Label(self, text="server:").grid(row=2, column=0)
-        tk.Label(self, text="port:").grid(row=3, column=0)
+        tk.Label(self, text="Messagerie config:", fg="blue").grid(row=0, column=0)
+        tk.Label(self, text="username:").grid(row=1, column=0, padx=10, pady=10)
+        tk.Label(self, text="server:").grid(row=2, column=0, padx=10, pady=10)
+        tk.Label(self, text="port:").grid(row=3, column=0, padx=10, pady=10)
 
         self.entryUsername = tk.Entry(self)
         self.entryUsername.grid(row=1, column=1)
@@ -41,12 +42,13 @@ class StartPage(tk.Frame):
         self.entryServer.grid(row=2, column=1)
         self.entryPort = tk.Entry(self)
         self.entryPort.grid(row=3, column=1)
-        button = tk.Button(self, text="valider", command=lambda: self.validateConfig({
+        button = tk.Button(self, text="valider", width=20, fg="blue", command=lambda: self.validateConfig({
             'username': self.entryUsername.get(),
             'server': self.entryServer.get(),
             'port': int(self.entryPort.get())
         }))
-        button.grid(row=4, column=0, columnspan=2)
+        button.place(relx=0.5, rely=0.5, anchor=CENTER)
+        button.grid(row=4, column=0, columnspan=6, padx=10, pady=10)
 
     def validateConfig(self, data):
         self.controller.frames['PageMain'].receive_data(data)
@@ -79,6 +81,7 @@ class PageMain(tk.Frame):
 
     def handle(self, data):
         self.messages.insert(tk.END, data + '\n', 'message')
+
 
 if __name__ == '__main__':
     ClientApp().mainloop()
